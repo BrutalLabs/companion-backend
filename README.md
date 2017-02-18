@@ -1,7 +1,7 @@
 # Companion Backend
 
-This README outlines the details of collaborating on this application.
-A short introduction of this app could easily go here.
+Backend solution for the companion project.
+Running instance at: https://companion-backend.herokuapp.com/
 
 ## Prerequisites
 
@@ -10,6 +10,7 @@ You will need the following things properly installed on your computer.
 * [Git](https://git-scm.com/)
 * [Node.js](https://nodejs.org/) (with NPM)
 * [Nodemon](https://github.com/remy/nodemon) (optional for auto reloading)
+* [Heroku](https://devcenter.heroku.com)
 
 ## Installation
 
@@ -23,3 +24,7 @@ You will need the following things properly installed on your computer.
 * `node app.js`
 or
 * `nodemon app.js`
+
+## Deploying on herokuapp
+
+* `git push heroku master`
