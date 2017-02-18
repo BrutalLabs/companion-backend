@@ -2,7 +2,11 @@ let request = require('request')
 let express = require('express')
 let router = express.Router()
 
-router.get('/spotify/search', function (req, res) {
+router.get('/', function(req, res) {
+  res.send(`Are you lost? I'm not supposed to be visible... Or am I?`)
+})
+
+router.get('/spotify/search', function(req, res) {
   let query = req.query.q;
 
   request(`https://api.spotify.com/v1/search?q=${query}&type=album,track,artist`, function(error, response, body) {
