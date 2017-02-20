@@ -2,8 +2,8 @@ let express = require('express')
 let app = express()
 
 // Define controllers
-let index = require('./api/controllers/index')
-app.use('/', index)
+app.use('/', require('./api/controllers/index'))
+app.use('/playlists', require('./api/controllers/playlists'))
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
