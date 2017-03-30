@@ -34,14 +34,22 @@ module.exports = {
           console.log('Connection established to', mongodb_uri);
 
           db.collection('playlists')
-            .find({_id: ObjectId(id) })
+            .find({ _id: ObjectId(id) })
             .limit(1)
             .next(function(err, docs) {
               if (err) reject(err);
 
-              db.close();
-              resolve(docs);
-          });
+              let playlist = docs;
+              db.collection('tracks')
+                .find({ playlist_id: id })
+                .toArray(function(err, docs) {
+                  if (err) reject(err);
+
+                  playlist.tracks = docs;
+                  db.close();
+                  resolve(playlist);
+                });
+            });
         };
       });
     });
