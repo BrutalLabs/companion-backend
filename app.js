@@ -1,6 +1,8 @@
 let express = require('express')
 let app = express()
-let bodyParser = require('body-parser');
+let bodyParser = require('body-parser')
+let db = require('./api/services/db')
+let mongodb_uri = process.env.MONGODB_URI
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(function(req, res, next) {
@@ -10,14 +12,21 @@ app.use(function(req, res, next) {
   next();
 });
 
-// Define controllers
+// Define Controllers
 app.use(require('./api/controllers'))
 
-// set the port of our application
-// process.env.PORT lets the port be set by Heroku
+// set the port of the application via environment variables
 let port = process.env.PORT || 3000;
 
-// Run server
-app.listen(port, function () {
-  console.log('listening on port: ', port)
+// Connect to Mongo and Run server
+db.connect(mongodb_uri, function(err) {
+  if (err) {
+    console.log('Unable to connect to Mongo. Error: ', err)
+    process.exit(1)
+  } else {
+    console.log('Connection to Mongo established at', mongodb_uri);
+    app.listen(port, function() {
+      console.log('Listening on port: ', port)
+    })
+  }
 })

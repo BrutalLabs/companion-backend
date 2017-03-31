@@ -1,139 +1,92 @@
-let mongodb = require('mongodb');
-let MongoClient = mongodb.MongoClient;
-let mongodb_uri = process.env.MONGODB_URI;
+let db = require('../services/db');
 let { ObjectId } = require('mongodb');
 
 module.exports = {
   get() {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function (err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          db.collection('playlists')
-            .find()
-            .toArray(function(err, docs) {
-              if (err) reject(err);
-
-              db.close();
-              resolve(docs);
-          });
-        };
-      });
-    });
+      db.get()
+        .collection('playlists')
+        .find()
+        .toArray(function(err, docs) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        });
+    })
   },
 
   getById(id) {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function (err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
+      db.get()
+        .collection('playlists')
+        .find({ _id: ObjectId(id) })
+        .limit(1)
+        .next(function(err, docs) {
+          if (err) {
+            reject(err)
+            return;
+          }
 
-          db.collection('playlists')
-            .find({ _id: ObjectId(id) })
-            .limit(1)
-            .next(function(err, docs) {
-
-              if (err) {
-                reject(err)
-                db.close();
-                return;
-              }
-
-              if (docs === null) {
-                reject('No playlists found');
-                db.close();
-                return;
-              }
-
-              db.close();
-              resolve(docs);
-            });
-        };
-      });
+          if (docs === null) {
+            reject('No playlists found');
+            return;
+          }
+          resolve(docs);
+        });
     });
   },
 
   create(playlist) {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function(err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          // TODO validate playlist contents
-          if (!playlist) {
-            reject('No valid playlist in request');
-          } else {
-            db.collection('playlists')
-              .insertOne(playlist, function(err, r) {
-                if (err) {
-                  console.log('oops -> ', err);
-                  reject(err);
-                }
-                db.close();
-                resolve('success');
-              }
-            );
-          }
-        }
-      });
+      // TODO validate playlist contents
+      if (!playlist) {
+        reject('No valid playlist in request');
+      } else {
+        db.get()
+          .collection('playlists')
+          .insertOne(playlist, function(err, r) {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve('success');
+          });
+      }
     });
   },
 
   patch(id, playlist) {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function(err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          // TODO validate playlist contents
-          if (!playlist) {
-            reject('No valid playlist in request');
-          } else {
-            db.collection('playlists')
-              .update({_id: ObjectId(id) }, playlist, function(err, r) {
-                if (err) {
-                  console.log('oops -> ', err);
-                  reject(err);
-                }
-                db.close();
-                resolve('success');
-              }
-            );
-          }
-        }
-      });
+      // TODO validate playlist contents
+      if (!playlist) {
+        reject('No valid playlist in request');
+      } else {
+        db.get()
+          .collection('playlists')
+          .update({_id: ObjectId(id) }, playlist, function(err, r) {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve('success');
+          });
+      }
     });
   },
 
   delete(id) {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function(err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          db.collection('playlists')
-            .deleteOne({_id: ObjectId(id) }, function(err, r) {
-              if (err) {
-                console.log('oops -> ', err);
-                reject(err);
-              }
-              db.close();
-              resolve('success');
-            }
-          );
-        }
-      });
+      db.get()
+        .collection('playlists')
+        .deleteOne({_id: ObjectId(id) }, function(err, r) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve('success');
+        });
     });
   }
 };

@@ -1,80 +1,53 @@
-let mongodb = require('mongodb');
-let MongoClient = mongodb.MongoClient;
-let mongodb_uri = process.env.MONGODB_URI;
+let db = require('../services/db');
 let { ObjectId } = require('mongodb');
 
 module.exports = {
   get() {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function (err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          db.collection('tracks')
-            .find()
-            .toArray(function(err, docs) {
-              if (err) reject(err);
-
-              db.close();
-              resolve(docs);
-          });
-        };
-      });
+      db.get()
+        .collection('tracks')
+        .find()
+        .toArray(function(err, docs) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        });
     });
   },
 
   getByPlaylist(id) {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function (err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          db.collection('tracks')
-            .find({ playlist_id: id })
-            .toArray(function(err, docs) {
-              if (err) {
-                reject(err);
-                db.close();
-                return;
-              }
-
-              db.close();
-              resolve(docs);
-            });
-        };
-      });
+      db.get()
+        .collection('tracks')
+        .find({ playlist_id: id })
+        .toArray(function(err, docs) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(docs);
+        });
     });
   },
 
   insert(track) {
     return new Promise(function(resolve, reject) {
-      MongoClient.connect(mongodb_uri, function(err, db) {
-        if (err) {
-          console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-          console.log('Connection established to', mongodb_uri);
-
-          // TODO validate track contents
-          if (!track) {
-            reject('No valid track in request');
-          } else {
-            db.collection('tracks')
-              .insertOne(track, function(err, r) {
-                if (err) {
-                  console.log('oops -> ', err);
-                  reject(err);
-                }
-                db.close();
-                resolve('success');
-              }
-            );
-          }
-        }
-      });
+      // TODO validate track contents
+      if (!track) {
+        reject('No valid track in request');
+      } else {
+        db.get()
+          .collection('tracks')
+          .insertOne(track, function(err, r) {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve('success');
+          });
+      }
     });
   }
 };
