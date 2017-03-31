@@ -19,7 +19,13 @@ router.get('/:id', function(req, res) {
   let { id } = req.params;
 
   playlistsRepository.getById(id).then(response => {
-    res.json(response);
+    let playlist = response;
+    tracksRepository.getByPlaylist(id).then(response => {
+      playlist.tracks = response;
+      res.json(playlist);
+    }).catch(err => {
+      res.json(err);
+    });
   }).catch(err => {
     res.json(err);
   });

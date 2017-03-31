@@ -11,8 +11,7 @@ app.use(function(req, res, next) {
 });
 
 // Define controllers
-app.use('/', require('./api/controllers/index'))
-app.use('/playlists', require('./api/controllers/playlists'))
+app.use(require('./api/controllers'))
 
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku

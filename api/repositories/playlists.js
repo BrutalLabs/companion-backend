@@ -37,18 +37,21 @@ module.exports = {
             .find({ _id: ObjectId(id) })
             .limit(1)
             .next(function(err, docs) {
-              if (err) reject(err);
 
-              let playlist = docs;
-              db.collection('tracks')
-                .find({ playlist_id: id })
-                .toArray(function(err, docs) {
-                  if (err) reject(err);
+              if (err) {
+                reject(err)
+                db.close();
+                return;
+              }
 
-                  playlist.tracks = docs;
-                  db.close();
-                  resolve(playlist);
-                });
+              if (docs === null) {
+                reject('No playlists found');
+                db.close();
+                return;
+              }
+
+              db.close();
+              resolve(docs);
             });
         };
       });

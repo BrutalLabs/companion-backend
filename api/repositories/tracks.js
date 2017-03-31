@@ -25,6 +25,31 @@ module.exports = {
     });
   },
 
+  getByPlaylist(id) {
+    return new Promise(function(resolve, reject) {
+      MongoClient.connect(mongodb_uri, function (err, db) {
+        if (err) {
+          console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+          console.log('Connection established to', mongodb_uri);
+
+          db.collection('tracks')
+            .find({ playlist_id: id })
+            .toArray(function(err, docs) {
+              if (err) {
+                reject(err);
+                db.close();
+                return;
+              }
+
+              db.close();
+              resolve(docs);
+            });
+        };
+      });
+    });
+  },
+
   insert(track) {
     return new Promise(function(resolve, reject) {
       MongoClient.connect(mongodb_uri, function(err, db) {

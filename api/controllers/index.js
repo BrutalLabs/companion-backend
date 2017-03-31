@@ -3,6 +3,12 @@ let router = express.Router();
 let spotifyService = require('../services/spotify');
 
 /*
+  playlists Controller
+  Base Route '/playlists'
+*/
+router.use('/playlists', require('./playlists'));
+
+/*
   Index Controller
   Base route '/'
 */
