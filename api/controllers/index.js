@@ -24,7 +24,7 @@ router.get('/spotify/search', function(req, res) {
   search.then(result => {
     res.json(result);
   }).catch(error => {
-    res.json(error);
+    res.status(500).send({error});
   });
 });
 

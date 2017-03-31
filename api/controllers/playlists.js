@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
   playlistsRepository.get().then(response => {
     res.json(response);
   }).catch(error => {
-    res.json(error);
+    res.status(500).send({error});
   });
 });
 
@@ -23,11 +23,11 @@ router.get('/:id', function(req, res) {
     tracksRepository.getByPlaylist(id).then(response => {
       playlist.tracks = response;
       res.json(playlist);
-    }).catch(err => {
-      res.json(err);
+    }).catch(error => {
+      res.status(500).send({error});
     });
-  }).catch(err => {
-    res.json(err);
+  }).catch(error => {
+    res.status(500).send({error});
   });
 });
 
@@ -44,8 +44,8 @@ router.post('/new', function(req, res) {
   let { playlist }  = req.body;
   playlistsRepository.create(playlist).then(response => {
     res.json(response);
-  }).catch(err => {
-    res.json(err);
+  }).catch(error => {
+    res.status(500).send({error});
   });
 });
 
@@ -63,8 +63,8 @@ router.patch('/:id/edit', function(req, res) {
   let { id } = req.params;
   playlistsRepository.patch(id, playlist).then(response => {
     res.json(response);
-  }).catch(err => {
-    res.json(err);
+  }).catch(error => {
+    res.status(500).send({error});
   });
 });
 
@@ -72,8 +72,8 @@ router.delete('/:id/delete', function(req, res) {
   let { id } = req.params;
   playlistsRepository.delete(id).then(response => {
     res.json(response);
-  }).catch(err => {
-    res.json(err);
+  }).catch(error => {
+    res.status(500).send({error});
   });
 });
 
@@ -91,8 +91,8 @@ router.post('/:id/addTrack', function(req, res) {
 
   tracksRepository.insert(track).then(response => {
     res.json(response);
-  }).catch(err => {
-    res.json(err);
+  }).catch(error => {
+    res.status(500).send({error});
   });
 });
 
